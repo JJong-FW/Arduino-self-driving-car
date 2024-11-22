@@ -1,0 +1,2 @@
+- Sketch- > include Library -> Mange Library -> TimerOne 라이브러리 다운함
+-Adafruit NeoPixel 라이브러리 다운로드 함 (LED 사용을 위함)
