@@ -87,13 +87,13 @@ void parkingControl(void)
         break;
     case 1:
         ledModeSet(LED_STOP);
-        if (++parkingCnt > TIME_3S)
+
+        if (++parkingCnt > TIME_5S)
         {
             parkingMode(OFF);
             parkingStep = 0;
             parkingCnt = 0;
         }
-
         break;
     }
 }

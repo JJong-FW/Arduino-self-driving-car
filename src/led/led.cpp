@@ -89,7 +89,7 @@ void ledModeSet(int mode)
             frontRihgtLedSet(255, 255, 0);
             tailLedSet(255, 255, 0);
 
-            if (++ledCnt > TIME_1S)
+            if (++ledCnt > TIME_500MS)
             {
                 ledCnt = 0;
                 ledSubStep = 1;
@@ -100,7 +100,7 @@ void ledModeSet(int mode)
             frontRihgtLedSet(0, 0, 0);
             tailLedSet(0, 0, 0);
 
-            if (++ledCnt > TIME_1S)
+            if (++ledCnt > TIME_500MS)
             {
                 ledCnt = 0;
                 ledSubStep = 0;
