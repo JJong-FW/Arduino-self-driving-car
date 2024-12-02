@@ -8,6 +8,7 @@
 #include "../led/led.h"
 #include "../infrared/infrared.h"
 #include "../cdsSensor/cds.h"
+#include "../cam/cam.h"
 
 extern void selfDrivingCarControl(void);
 

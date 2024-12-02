@@ -1,6 +1,7 @@
 {
     "files.associations": {
         "cds.h": "c",
-        "def.h": "c"
+        "def.h": "c",
+        "cam.h": "c"
     }
 }

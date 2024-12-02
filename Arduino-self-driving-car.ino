@@ -8,19 +8,23 @@
 #include "src/motor/motor.h"
 #include "src/infrared/infrared.h"
 #include "src/cdsSensor/cds.h"
+#include "src/cam/cam.h"
+
+Pixy2 pixy;
 
 void setup()
 {
-  Serial.begin(9600);
-
-  delay(1000);
-
   ledInit();
   motorInit();
   buzzerInit();
   infraredInit();
   ultraSonicInit();
   cdsInit();
+
+  camInit();
+
+  delay(1000);
+  Serial.begin(115200);
 
   Timer1.initialize(INTERVAL);
   Timer1.attachInterrupt(timerCallback); // interupt handler
@@ -30,7 +34,7 @@ void timerCallback()
 {
   static int mainCnt;
 
-  if (parkingMode(RETURN) == ON) // Is it parking? (Very far away from the right wall)
+  if (parkingMode(RETURN) == ON)
   {
     printStringLog("Mode: Parking", mainCnt);
     parkingControl();
@@ -40,6 +44,8 @@ void timerCallback()
     printStringLog("Mode: Driving", mainCnt);
     selfDrivingCarControl();
   }
+  
+  camFunc();
 }
 
 void loop()

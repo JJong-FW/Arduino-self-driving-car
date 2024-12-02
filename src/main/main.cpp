@@ -48,6 +48,17 @@ void selfDrivingCarControl(void)
         ledModeSet(LED_OFF);
     }
     
+    if(camSignal() == 1 || camSignal() == 2)
+    {
+        printStringLog("Red or Blue detect", logCnt[1]);
+        L_Speed = 0;
+        R_Speed = 0;
+    }
+    else
+    {
+       printStringLog("Red or Blue not detect", logCnt[1]);
+    }
+
 
     motorControl(L_Speed, R_Speed);
 }
