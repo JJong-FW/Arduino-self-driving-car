@@ -8,6 +8,7 @@ extern Pixy2 pixy;
 extern void camInit(void);
 extern void camFunc(void);
 extern int redColorDetect(void);
-extern void camSignal (void);
+extern int camSignal (void);
+extern int yCoordValue (void);
 #endif
 

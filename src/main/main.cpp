@@ -13,52 +13,91 @@ void selfDrivingCarControl(void)
 
     static int ledLogCnt;
     static int logCnt[4];
-
-    printIntLog("front Dis",F_dis,logCnt[0]);
+    static byte blueDetectFlag;
+    static int blueOffCnt;
+    // printIntLog("front Dis", F_dis, logCnt[0]);
 
     if (F_dis < 130)
     {
-        parkingMode(ON);
+        Serial.println("front detect Motor Stop");
+
+        if (camSignal() == 1)
+        {
+            ledModeSet(LED_HUMAN_GANG);
+        }
+        else
+        {
+            parkingBuzzer();
+            ledModeSet(LED_STOP);
+        }
+
+        motorControl(0, 0);
         return;
     }
     else if (R_dis > 110)
     {
         L_Speed = MAX_SPEED;
-        R_Speed = -20;
+        R_Speed = -(MAX_SPEED / 5);
     }
-    else if (R_dis >= 90 && R_dis <= 110)
+    else if (R_dis > 90)
     {
         L_Speed = MAX_SPEED;
         R_Speed = MAX_SPEED;
     }
     else
     {
-        L_Speed = 0;
+        L_Speed = -(MAX_SPEED / 5);
         R_Speed = MAX_SPEED;
     }
 
-    if (cdsReturn() > 80)
+    if (camSignal() == 1)
     {
-        printStringLog("LED: ON", ledLogCnt);
-        ledModeSet(LED_ON);
+        if (yCoordValue() < 70)
+        {
+            printStringLog("Red or Blue detect", logCnt[1]);
+            ledModeSet(LED_STOP);
+            L_Speed = 0;
+            R_Speed = 0;
+
+            // Serial.println("red detect Motor Stop");
+        }
+    }
+    else if (camSignal() == 3)
+    {
+        blueDetectFlag = 1;
+        // Serial.println("blue detect Motor Stop");
     }
     else
     {
-        printStringLog("LED: OFF", ledLogCnt);
-        ledModeSet(LED_OFF);
-    }
-    
-    if(camSignal() == 1 || camSignal() == 2)
-    {
-        printStringLog("Red or Blue detect", logCnt[1]);
-        L_Speed = 0;
-        R_Speed = 0;
-    }
-    else
-    {
-       printStringLog("Red or Blue not detect", logCnt[1]);
+        if (cdsReturn() > 100)
+        {
+            printStringLog("LED: ON", ledLogCnt);
+            L_Speed = MAX_SPEED * 0.8;
+            R_Speed = MAX_SPEED * 0.8;
+            ledModeSet(LED_TUNNEL);
+        }
+        else
+        {
+            printStringLog("LED: OFF", ledLogCnt);
+            ledModeSet(LED_OFF);
+        }
     }
 
+    if (blueDetectFlag)
+    {
+        ledModeSet(LED_STOP);
+        L_Speed = 0;
+        R_Speed = 0;
+
+        if (camSignal() != 3)
+        {
+            if (++blueOffCnt > TIME_1S)
+            {
+                blueDetectFlag = 0;
+                blueOffCnt = 0;
+            }
+        }
+    }
 
     motorControl(L_Speed, R_Speed);
 }

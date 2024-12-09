@@ -1,6 +1,7 @@
 #include "cam.h"
 
 int signal;
+int yCoord;
 
 void camInit(void)
 {
@@ -11,6 +12,7 @@ void camInit(void)
 void camFunc(void)
 {
     int i;
+    static int camCnt;
 
     pixy.ccc.getBlocks();
 
@@ -21,11 +23,12 @@ void camFunc(void)
 
         for (i = 0; i < pixy.ccc.numBlocks; i++)
         {
-            // Serial.print(" block ");
-            // Serial.print(i);
-            // Serial.print(": ");
-            // pixy.ccc.blocks[i].print();
+            Serial.print(" block ");
+            Serial.print(i);
+            Serial.print(": ");
+            pixy.ccc.blocks[i].print();
             signal = pixy.ccc.blocks[i].m_signature;
+            yCoord = pixy.ccc.blocks[i].m_y;
         }
     }
     else
@@ -34,7 +37,12 @@ void camFunc(void)
     }
 }
 
-void camSignal (void)
+int camSignal(void)
 {
     return signal;
+}
+
+int yCoordValue (void)
+{
+    return yCoord;
 }

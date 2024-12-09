@@ -33,19 +33,16 @@ void setup()
 void timerCallback()
 {
   static int mainCnt;
+  static int camCnt;
 
-  if (parkingMode(RETURN) == ON)
+  //printStringLog("Mode: Driving", mainCnt);
+  selfDrivingCarControl();
+
+  if (++camCnt > TIME_500MS)
   {
-    printStringLog("Mode: Parking", mainCnt);
-    parkingControl();
+    camFunc();
+    camCnt = 0;
   }
-  else
-  {
-    printStringLog("Mode: Driving", mainCnt);
-    selfDrivingCarControl();
-  }
-  
-  camFunc();
 }
 
 void loop()

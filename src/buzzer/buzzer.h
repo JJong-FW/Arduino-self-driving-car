@@ -6,4 +6,5 @@
 extern void buzzerInit (void);
 
 extern void warningBuzzer (int sound, int timmer);
+extern void parkingBuzzer(void);
 #endif

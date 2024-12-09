@@ -39,13 +39,43 @@ void frontLeftLedSet(byte red, byte green, byte blue)
     interrupts();
 }
 
-void tailLedSet(byte red, byte green, byte blue)
+void humanGangFrontLed(byte red, byte green, byte blue)
 {
-    for (int i = 0; i < backLed.numPixels(); i++)
+    for (int i = 0; i < 2; i++)
+    {
+        frontLeftLed.setPixelColor(i, red, green, blue);
+    }
+
+    for (int i = 0; i < 2; i++)
+    {
+        frontRightLed.setPixelColor(i, red, green, blue);
+    }
+
+    noInterrupts();
+    frontLeftLed.show();
+    frontRightLed.show();
+    interrupts();
+}
+
+void tailLedPartSet(byte red, byte green, byte blue)
+{
+    for (int i = 3; i < 13; i++)
     {
         backLed.setPixelColor(i, red, green, blue);
     }
-    
+
+    noInterrupts();
+    backLed.show();
+    interrupts();
+}
+
+void tailLedFullSet(byte red, byte green, byte blue)
+{
+    for (int i = 3; i < 13; i++)
+    {
+        backLed.setPixelColor(i, red, green, blue);
+    }
+
     noInterrupts();
     backLed.show();
     interrupts();
@@ -54,6 +84,7 @@ void tailLedSet(byte red, byte green, byte blue)
 void ledModeSet(int mode)
 {
     static long ledCnt;
+    static long ledMainCnt;
     static byte ledSubStep;
     static int preMode;
 
@@ -61,52 +92,38 @@ void ledModeSet(int mode)
     {
         frontLeftLedSet(0, 0, 0);
         frontRihgtLedSet(0, 0, 0);
-        tailLedSet(0, 0, 0);
+        tailLedPartSet(0, 0, 0);
+        tailLedFullSet(0, 0, 0);
 
         ledSubStep = 0;
         preMode = mode;
     }
 
-    switch (mode)
+    if (++ledMainCnt > TIME_200MS)
     {
-    case LED_OFF:
-        frontLeftLedSet(0, 0, 0);
-        frontRihgtLedSet(0, 0, 0);
-        tailLedSet(0, 0, 0);
-        return;
-
-    case LED_ON:
-        frontLeftLedSet(255, 255, 255);
-        frontRihgtLedSet(255, 255, 255);
-        tailLedSet(255, 255, 0);
-        return;
-
-    case LED_STOP:
-        switch (ledSubStep)
+        switch (mode)
         {
-        case 0:
-            frontLeftLedSet(255, 255, 0);
-            frontRihgtLedSet(255, 255, 0);
-            tailLedSet(255, 255, 0);
-
-            if (++ledCnt > TIME_500MS)
-            {
-                ledCnt = 0;
-                ledSubStep = 1;
-            }
-            break;
-        case 1:
+        case LED_OFF:
             frontLeftLedSet(0, 0, 0);
             frontRihgtLedSet(0, 0, 0);
-            tailLedSet(0, 0, 0);
+            tailLedFullSet(0, 0, 0);
+            return;
 
-            if (++ledCnt > TIME_500MS)
-            {
-                ledCnt = 0;
-                ledSubStep = 0;
-            }
-            break;
+        case LED_TUNNEL:
+            frontLeftLedSet(255, 255, 255);
+            frontRihgtLedSet(255, 255, 255);
+            tailLedFullSet(255, 255, 255);
+            return;
+
+        case LED_STOP:
+            tailLedPartSet(255, 0, 0);
+            return;
+
+        case LED_HUMAN_GANG:
+            humanGangFrontLed(255, 255, 0);
+            tailLedPartSet(255, 0, 0);
+            return;
         }
-        return;
+        ledMainCnt = 0;
     }
 }

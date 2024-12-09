@@ -5,15 +5,15 @@
 
 #define VERSION_H   0
 #define VERSION_M   0
-#define VERSION_L   2
+#define VERSION_L   3
 
-#define MAX_SPEED   150
+#define MAX_SPEED   200
 #define RETURN  99
 
 #define ON  1
 #define OFF 0
 
-#define INTERVAL 40000 // 2000us -> 2ms
+#define INTERVAL 10000 // 2000us -> 2ms
 
 #define TIME_100MS (100000 / INTERVAL)
 #define TIME_200MS (TIME_100MS * 2)
