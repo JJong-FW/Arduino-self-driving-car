@@ -98,32 +98,32 @@ void ledModeSet(int mode)
         ledSubStep = 0;
         preMode = mode;
     }
-
-    if (++ledMainCnt > TIME_200MS)
+    else
     {
-        switch (mode)
-        {
-        case LED_OFF:
-            frontLeftLedSet(0, 0, 0);
-            frontRihgtLedSet(0, 0, 0);
-            tailLedFullSet(0, 0, 0);
-            return;
+        return;
+    }
 
-        case LED_TUNNEL:
-            frontLeftLedSet(255, 255, 255);
-            frontRihgtLedSet(255, 255, 255);
-            tailLedFullSet(255, 255, 255);
-            return;
+    switch (mode)
+    {
+    case LED_OFF:
+        frontLeftLedSet(0, 0, 0);
+        frontRihgtLedSet(0, 0, 0);
+        tailLedFullSet(0, 0, 0);
+        return;
 
-        case LED_STOP:
-            tailLedPartSet(255, 0, 0);
-            return;
+    case LED_TUNNEL:
+        frontLeftLedSet(255, 255, 255);
+        frontRihgtLedSet(255, 255, 255);
+        tailLedFullSet(255, 255, 255);
+        return;
 
-        case LED_HUMAN_GANG:
-            humanGangFrontLed(255, 255, 0);
-            tailLedPartSet(255, 0, 0);
-            return;
-        }
-        ledMainCnt = 0;
+    case LED_STOP:
+        tailLedPartSet(255, 0, 0);
+        return;
+
+    case LED_HUMAN_GANG:
+        humanGangFrontLed(255, 255, 0);
+        tailLedPartSet(255, 0, 0);
+        return;
     }
 }

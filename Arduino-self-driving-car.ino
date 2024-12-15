@@ -32,13 +32,11 @@ void setup()
 
 void timerCallback()
 {
-  static int mainCnt;
   static int camCnt;
 
-  //printStringLog("Mode: Driving", mainCnt);
   selfDrivingCarControl();
 
-  if (++camCnt > TIME_500MS)
+  if (++camCnt > TIME_200MS)  //Check the camera every 200 ms
   {
     camFunc();
     camCnt = 0;

@@ -11,74 +11,75 @@ void selfDrivingCarControl(void)
     int BR_dis = calculateDistance(BACK_RIGHT);
     int F_dis = calculateDistance(FRONT_CENTER);
 
-    static int ledLogCnt;
-    static int logCnt[4];
     static byte blueDetectFlag;
     static int blueOffCnt;
-    // printIntLog("front Dis", F_dis, logCnt[0]);
 
-    if (F_dis < 130)
+    if (F_dis < 180)    //I think the car is going to hit!!
     {
+        static int humanGangCnt;
+
         Serial.println("front detect Motor Stop");
 
-        if (camSignal() == 1)
+        if (camSignal() == 1)  //If the red floor and the person are detected together 
         {
             ledModeSet(LED_HUMAN_GANG);
+            humanGangCnt = 0;
         }
         else
         {
-            parkingBuzzer();
-            ledModeSet(LED_STOP);
+            if (++humanGangCnt > TIME_3S)   //Determine if parking is available for 3 seconds
+            {
+                parkingBuzzer();
+                ledModeSet(LED_STOP);
+            }
         }
 
         motorControl(0, 0);
         return;
     }
-    else if (R_dis > 110)
+
+    buzzerStop();
+    /********************************************************/
+    if (R_dis > 110)
     {
         L_Speed = MAX_SPEED;
-        R_Speed = -(MAX_SPEED / 5);
+        R_Speed = -(R_dis / 3);
     }
     else if (R_dis > 90)
     {
-        L_Speed = MAX_SPEED;
-        R_Speed = MAX_SPEED;
+        L_Speed = MAX_SPEED + ((R_dis - 100) *3);
+        R_Speed = MAX_SPEED + ((100 - R_dis) * 3);
     }
     else
     {
-        L_Speed = -(MAX_SPEED / 5);
+        L_Speed = -(R_dis / 1.8);
         R_Speed = MAX_SPEED;
     }
-
-    if (camSignal() == 1)
+    
+    /*****************************************************/
+    if (camSignal() == CAM_RED)
     {
-        if (yCoordValue() < 70)
+        if (yCoordValue() < 70) //Is the top red?       //If the floor is red, ignore it
         {
-            printStringLog("Red or Blue detect", logCnt[1]);
             ledModeSet(LED_STOP);
             L_Speed = 0;
             R_Speed = 0;
-
-            // Serial.println("red detect Motor Stop");
         }
     }
-    else if (camSignal() == 3)
+    else if (camSignal() == CAM_BLUE)   //Vehicle Breaker Detection
     {
-        blueDetectFlag = 1;
-        // Serial.println("blue detect Motor Stop");
+        blueDetectFlag = 1; //Flag On
     }
     else
     {
-        if (cdsReturn() > 100)
+        if (cdsReturn() > 100)  //Is this a tunnel?
         {
-            printStringLog("LED: ON", ledLogCnt);
-            L_Speed = MAX_SPEED * 0.8;
-            R_Speed = MAX_SPEED * 0.8;
+            L_Speed = L_Speed * 0.7;
+            R_Speed = R_Speed * 0.7;
             ledModeSet(LED_TUNNEL);
         }
         else
         {
-            printStringLog("LED: OFF", ledLogCnt);
             ledModeSet(LED_OFF);
         }
     }
@@ -89,7 +90,7 @@ void selfDrivingCarControl(void)
         L_Speed = 0;
         R_Speed = 0;
 
-        if (camSignal() != 3)
+        if (camSignal() != CAM_BLUE)   //Has the car breaker been released?
         {
             if (++blueOffCnt > TIME_1S)
             {
@@ -102,48 +103,50 @@ void selfDrivingCarControl(void)
     motorControl(L_Speed, R_Speed);
 }
 
-void parkingControl(void)
-{
-    static byte parkingStep;
-    static long parkingCnt;
-    static int counter;
 
-    int F_dis = calculateDistance(FRONT_CENTER);
 
-    if (++counter > TIME_1S)
-    {
-        Serial.println(parkingStep);
-        Serial.println(getBackDistance());
-        counter = 0;
-    }
+// void parkingControl(void)
+// {
+//     static byte parkingStep;
+//     static long parkingCnt;
+//     static int counter;
 
-    switch (parkingStep)
-    {
-    case 0:
-        if (F_dis > 150)
-        {
-            if (++parkingCnt > TIME_300MS)
-            {
-                motorControl(0, 0);
-                parkingCnt = 0;
-                parkingStep = 1;
-            }
-        }
-        else
-        {
-            motorControl(-255, 255);
-        }
+//     int F_dis = calculateDistance(FRONT_CENTER);
 
-        break;
-    case 1:
-        ledModeSet(LED_STOP);
+//     if (++counter > TIME_1S)
+//     {
+//         Serial.println(parkingStep);
+//         Serial.println(getBackDistance());
+//         counter = 0;
+//     }
 
-        if (++parkingCnt > TIME_5S)
-        {
-            parkingMode(OFF);
-            parkingStep = 0;
-            parkingCnt = 0;
-        }
-        break;
-    }
-}
+//     switch (parkingStep)
+//     {
+//     case 0:
+//         if (F_dis > 150)
+//         {
+//             if (++parkingCnt > TIME_300MS)
+//             {
+//                 motorControl(0, 0);
+//                 parkingCnt = 0;
+//                 parkingStep = 1;
+//             }
+//         }
+//         else
+//         {
+//             motorControl(-255, 255);
+//         }
+
+//         break;
+//     case 1:
+//         ledModeSet(LED_STOP);
+
+//         if (++parkingCnt > TIME_5S)
+//         {
+//             parkingMode(OFF);
+//             parkingStep = 0;
+//             parkingCnt = 0;
+//         }
+//         break;
+//     }
+// }

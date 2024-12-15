@@ -60,18 +60,16 @@ void parkingBuzzer(void)
 
         if (++buzzerCnt > TIME_1S)
         {
-            noTone(buzzer);
             buzzerCnt = 0;
             buzzerStep = 2;
         }
         break;
 
     case 2:
-        tone(buzzer, 130);
+        noTone(buzzer);
 
         if (++buzzerCnt > TIME_1S)
         {
-            noTone(buzzer);
             buzzerCnt = 0;
             buzzerStep = 3;
         }
@@ -79,22 +77,45 @@ void parkingBuzzer(void)
 
     case 3:
         tone(buzzer, 165);
-        
+
         if (++buzzerCnt > TIME_1S)
         {
-            noTone(buzzer);
             buzzerCnt = 0;
             buzzerStep = 4;
         }
         break;
 
     case 4:
+        noTone(buzzer);
         if (++buzzerCnt > TIME_500MS)
         {
-            noTone(buzzer);
+            buzzerCnt = 0;
+            buzzerStep = 5;
+        }
+        break;
+
+    case 5:
+        tone(buzzer, 250);
+
+        if (++buzzerCnt > TIME_1S)
+        {
+            buzzerCnt = 0;
+            buzzerStep = 6;
+        }
+        break;
+
+    case 6:
+        noTone(buzzer);
+        if (++buzzerCnt > TIME_500MS)
+        {
             buzzerCnt = 0;
             buzzerStep = 0;
         }
         break;
     }
+}
+
+void buzzerStop(void)
+{
+    noTone(buzzer);
 }
